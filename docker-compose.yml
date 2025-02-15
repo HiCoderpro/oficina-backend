@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongodb_oficina
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: .
+    container_name: backend_oficina
+    restart: always
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+    environment:
+      MONGO_URI: mongodb://admin:adminpassword@mongo:27017/oficina?authSource=admin
+      PORT: 3000
+
+volumes:
+  mongo_data:

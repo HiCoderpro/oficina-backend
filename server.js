@@ -1,19 +1,18 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
-const veiculosRoutes = require('./routes/veiculos');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-dotenv.config();
-connectDB();
+const connectDB = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            authSource: "admin"
+        });
+        console.log('MongoDB conectado com sucesso no Docker!');
+    } catch (error) {
+        console.error('Erro ao conectar ao MongoDB:', error);
+        process.exit(1);
+    }
+};
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-
-app.use('/veiculos', veiculosRoutes);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-});
+module.exports = connectDB;
